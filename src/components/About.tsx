@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { Card } from '@/components/ui/card'
+import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 
 const teamMembers = [
   {
@@ -33,6 +34,7 @@ const teamMembers = [
 export const About = () => {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true })
+  const { scrollProgress } = useScrollAnimation()
 
   return (
     <section id="about" className="py-24 relative overflow-hidden">
@@ -63,25 +65,64 @@ export const About = () => {
           {teamMembers.map((member, index) => (
             <motion.div
               key={member.name}
-              initial={{ opacity: 0, y: 50 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: index * 0.2 }}
+              initial={{ 
+                opacity: 0, 
+                x: index % 2 === 0 ? -200 : 200,
+                rotateY: index % 2 === 0 ? -45 : 45,
+                scale: 0.8
+              }}
+              animate={isInView ? { 
+                opacity: 1, 
+                x: 0,
+                rotateY: 0,
+                scale: 1
+              } : {}}
+              transition={{ 
+                duration: 1.2, 
+                delay: index * 0.3,
+                type: "spring",
+                bounce: 0.4
+              }}
+              style={{ perspective: "1000px" }}
             >
-              <Card className="glass hover:glass-strong transition-all duration-300 p-8 group hover:neon-glow">
+              <Card className="glass hover:glass-strong transition-all duration-500 p-8 group hover:neon-glow transform-gpu">
                 <motion.div
                   className="space-y-4"
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ 
+                    scale: 1.02,
+                    rotateY: 5,
+                    transition: { duration: 0.3 }
+                  }}
                   transition={{ duration: 0.3 }}
                 >
                   <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-2xl font-bold">
+                    <motion.div 
+                      className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-2xl font-bold"
+                      whileHover={{ 
+                        rotate: 360,
+                        scale: 1.1,
+                        transition: { duration: 0.6 }
+                      }}
+                    >
                       {member.name.split(' ')[0][0]}
-                    </div>
+                    </motion.div>
                     <div>
-                      <h3 className="text-2xl font-bold text-foreground group-hover:gradient-text transition-all duration-300">
+                      <motion.h3 
+                        className="text-2xl font-bold text-foreground group-hover:gradient-text transition-all duration-300"
+                        initial={{ opacity: 0 }}
+                        animate={isInView ? { opacity: 1 } : {}}
+                        transition={{ delay: index * 0.3 + 0.5 }}
+                      >
                         {member.name}
-                      </h3>
-                      <p className="text-primary font-semibold">{member.role}</p>
+                      </motion.h3>
+                      <motion.p 
+                        className="text-primary font-semibold"
+                        initial={{ opacity: 0 }}
+                        animate={isInView ? { opacity: 1 } : {}}
+                        transition={{ delay: index * 0.3 + 0.7 }}
+                      >
+                        {member.role}
+                      </motion.p>
                     </div>
                   </div>
                   
